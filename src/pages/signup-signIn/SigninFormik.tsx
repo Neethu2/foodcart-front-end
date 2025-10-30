@@ -1,66 +1,65 @@
 import { Button, TextField } from "@mui/material";
-import { Formik, Form, Field } from "formik";
+import { Field, Form, Formik } from "formik";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import * as Yup from "yup";
 import { useState } from "react";
-import { registerUser } from "../api/auth";
-import ToastContainer, { type ToastType } from "../components/ToastContainer";
+import * as Yup from "yup";
+import { loginUser } from "../../api/auth";
+import ToastContainer from "../../components/ToastContainer";
+import { useNavigate, Link } from "react-router-dom";
 
-interface ToastState {
-  show: boolean;
-  type: ToastType;
-  message: string;
-}
-
-const Register = () => {
+const SigninFormik = () => {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const [toast, setToast] = useState<ToastState>({
-    show: false,
-    type: "info",
+  const [toast, setToast] = useState<{
+    open: boolean;
+    type: "success" | "error";
+    message: string;
+  }>({
+    open: false,
+    type: "success",
     message: "",
   });
-
-  interface RegisterIntialValues {
-    username: String;
-    email: String;
-    password: String;
+  interface SigninFormInitialValues {
+    email: string;
+    password: string;
   }
-
-  const initialValues: RegisterIntialValues = {
-    username: "",
-    email: "",
-    password: "",
-  };
-
+  const initialValues: SigninFormInitialValues = { email: "", password: "" };
   const validationSchema = Yup.object().shape({
-    username: Yup.string().required("Required"),
     email: Yup.string()
       .email("Please enter a valid email")
-      .required("Email id is required"),
+      .required("Required"),
     password: Yup.string()
-      .min(6, "Password must be atlease 6 characters")
-      .max(21, "Password must be atleast 21 characters")
-      .required("Password is required"),
+      .min(6, "Password must be at least 6 characters")
+      .max(21, "Password must be at most 21 chars")
+      .required("Required"),
   });
-
-  const showToast = (type: ToastType, message: string) => {
-    setToast({ show: true, type, message });
-  };
-
-  const hideToast = () => {
-    setToast({ ...toast, show: false });
-  };
-
-  const handleSubmit = async (values: RegisterIntialValues) => {
+  const handleSubmit = async (
+    values: SigninFormInitialValues,
+    actions: any
+  ) => {
     try {
-      const data = await registerUser(values);
-      console.log("Form submitted:", data);
-      showToast("success", "User Registered Successfully");
-    } catch (err) {
-      console.error("Registration error:", err);
-      showToast("error", "User Registration Failed. Please try again.");
+      const data = await loginUser(values);
+      console.log(data);
+      setToast({
+        open: true,
+        type: "success",
+        message: "Logged In successfully",
+      });
+
+      // Redirect to dashboard after successful login
+      setTimeout(() => {
+        navigate("/dashboard/home");
+      }, 1500); // Wait 1.5 seconds to show the success message
+      localStorage.setItem("token", JSON.stringify(data.authToken));
+    } catch (error) {
+      setToast({
+        open: true,
+        type: "error",
+        message: "Login failed",
+      });
     }
+    actions.resetForm();
   };
   return (
     <>
@@ -69,19 +68,10 @@ const Register = () => {
         onSubmit={handleSubmit}
         validationSchema={validationSchema}
       >
-        {({ getFieldProps, touched, errors }) => {
+        {({ isSubmitting, errors, touched, getFieldProps }) => {
           return (
-            <Form>
+            <Form className="signin-form">
               <div className="d-flex flex-column align-items-center justify-content-center gap-3">
-                <Field
-                  as={TextField}
-                  label="Username"
-                  type="text"
-                  variant="outlined"
-                  error={touched.username && errors.username}
-                  helperText={touched.username && errors.username}
-                  {...getFieldProps("username")}
-                />
                 <Field
                   as={TextField}
                   label="Email"
@@ -113,11 +103,14 @@ const Register = () => {
                     />
                   )}
                 </div>
+                <small>
+                  Don't have an account? <Link to="/">Register</Link>
+                </small>
                 <Button
                   variant="contained"
                   color="primary"
                   type="submit"
-                  // disabled={isSubmitting}
+                  disabled={isSubmitting}
                 >
                   Sign In
                 </Button>
@@ -126,16 +119,14 @@ const Register = () => {
           );
         }}
       </Formik>
-      {toast.show && (
-        <ToastContainer
-          errorType={toast.type}
-          message={toast.message}
-          open={toast.show}
-          onClose={hideToast}
-        />
-      )}
+      <ToastContainer
+        errorType={toast.type}
+        message={toast.message}
+        open={toast.open}
+        onClose={() => setToast({ ...toast, open: false })}
+      />
     </>
   );
 };
 
-export default Register;
+export default SigninFormik;

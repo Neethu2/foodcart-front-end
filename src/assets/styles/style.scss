@@ -1,0 +1,115 @@
+@import "bootstrap/dist/css/bootstrap-grid.min.css";
+@import "bootstrap/dist/css/bootstrap-utilities.min.css";
+
+// Reset styles for better layout control
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+#root {
+  margin: 0;
+  padding: 0;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+.signin-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.disabled-btn {
+  opacity: 0.5;
+  pointer-events: none;
+}
+.password-field {
+  position: relative;
+}
+.eye-toggle {
+  position: absolute;
+  top: 15px;
+  right: 12px;
+  cursor: pointer;
+}
+
+// Dashboard Layout Styles
+.dashboard-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.dashboard-content {
+  display: flex;
+  flex: 1;
+  position: relative;
+}
+
+.main-content {
+  flex: 1;
+  padding: 0 24px 24px 24px; // No top padding since we use Toolbar spacer
+  background-color: #f9f9f9;
+  min-height: calc(100vh - 80px); // Subtract footer height
+  overflow-y: auto;
+}
+
+// Responsive design for smaller screens
+@media (max-width: 768px) {
+  .main-content {
+    padding: 0 16px 16px 16px;
+  }
+
+  .dashboard-layout .MuiDrawer-paper {
+    width: 180px !important;
+  }
+}
+
+.sidebar-item {
+  &:hover {
+    background-color: #e0e0e0;
+  }
+  &.selected {
+    background-color: #c0c0c069;
+  }
+}
+
+.register-form,
+.signin-form {
+  padding: 150px 0;
+}

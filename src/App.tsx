@@ -1,11 +1,13 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import "./App.scss";
-import { Dashboard, Home } from "@mui/icons-material";
-import Menu from "./pages/Menu";
-import CheckOut from "./pages/CheckOut";
-import Cart from "./pages/Carts";
-import SigninFormik from "./pages/SigninFormik";
-import Register from "./pages/Register";
+import DashboardLayout from "./layout/DashboardLayout";
+import Home from "./pages/Home";
+import Movies from "./pages/Movies";
+import TVShows from "./pages/TVShows";
+import Watchlist from "./pages/Watchlist";
+import Favorites from "./pages/Favorites";
+import SigninFormik from "./pages/signup-signIn/SigninFormik";
+import Register from "./pages/signup-signIn/Register";
+import "./assets/styles/style.scss";
 
 function App() {
   return (
@@ -13,15 +15,16 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />}>
+          <Route path="/login" element={<SigninFormik />} />
+          <Route path="/dashboard" element={<DashboardLayout />}>
             <Route path="home" element={<Home />} />
-            <Route path="menu" element={<Menu />} />
-            <Route path="cart" element={<Cart />} />
-            <Route path="checkout" element={<CheckOut />} />
+            <Route path="movies" element={<Movies />} />
+            <Route path="tvshows" element={<TVShows />} />
+            <Route path="watchlist" element={<Watchlist />} />
+            <Route path="favorites" element={<Favorites />} />
           </Route>
         </Routes>
       </BrowserRouter>
-      {/* <Signin /> */}
     </>
   );
 }
