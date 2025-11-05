@@ -6,6 +6,7 @@ import * as Yup from "yup";
 import { useState } from "react";
 import { registerUser } from "../api/auth";
 import ToastContainer, { type ToastType } from "../components/ToastContainer";
+import { Link } from "react-router-dom";
 
 interface ToastState {
   show: boolean;
@@ -121,6 +122,9 @@ const Register = () => {
                 >
                   Sign In
                 </Button>
+                <small>
+                  Already have an account? <Link to="/login">Sign In</Link>
+                </small>
               </div>
             </Form>
           );

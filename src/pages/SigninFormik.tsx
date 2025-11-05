@@ -4,9 +4,23 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { useState } from "react";
 import * as Yup from "yup";
+import ToastContainer, { type ToastType } from "../components/ToastContainer";
+import { loginUser } from "../api/auth";
+import { Navigate, useNavigate } from "react-router-dom";
 
+interface ToastState {
+  show: boolean;
+  type: ToastType;
+  message: string;
+}
 const SigninFormik = () => {
   const [type, setType] = useState(false);
+  const [toast, setToast] = useState<ToastState>({
+    show: false,
+    type: "info",
+    message: "",
+  });
+  const navigate = useNavigate();
   interface SigninFormInitialValues {
     email: string;
     password: string;
@@ -21,9 +35,23 @@ const SigninFormik = () => {
       .max(21, "Password must be at most 21 chars")
       .required("Required"),
   });
-  const handleSubmit = (values: SigninFormInitialValues, actions: any) => {
-    console.log("Form submitted:", values);
-    actions.resetForm();
+  const showToast = (type: ToastType, message: string) => {
+    setToast({ show: true, type, message });
+  };
+
+  const handleSubmit = async (
+    values: SigninFormInitialValues,
+    actions: any
+  ) => {
+    try {
+      const data = await loginUser(values);
+      localStorage.setItem("token", JSON.stringify(data.authToken));
+      showToast("success", "Login Successful");
+      actions.resetForm();
+      navigate("/dashboard/home");
+    } catch (e) {
+      showToast("error", "Login failed");
+    }
   };
   return (
     <>
